@@ -1,0 +1,1 @@
+Word Guess Game is a game in which the user guesses a word. In other words, it's just hangman. 
