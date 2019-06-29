@@ -349,42 +349,6 @@ emptyListOfLength = function (key) {
     return lengthOfBlanks;
 };
 
-guess = function (letter) {
-    // This function should be called using the 'call' method and have the instance of the game that it's operating within passed to it
-    // Takes in a single letter guess for 'letter'. Only minimal parsing is done here, so catching invalid input should be done before we get here.
-    // Takes a letter from the user. Parses it. Checks to make sure it wasn't guessed already.
-    // Then iterates through the answer list looking for matches.
-    // If a match is found then a flag is set to true denoting that the user guessed correctly.
-    // Additionally, ever time there is a hit on the answer key, the corresponding position in userHits is filled in.
-    // If the use gets no matches, then userLives is decremented and we check to make sure the user hasn't lost all lives.
-    // The boolean value of the matchFlag is returned at the end.
-    letter = letter.lower().strip();
-    let matchFlag = false; 
-
-    if (!(this.guessBank.includes(letter))) {
-        throw('alreadyUsedLetter');
-    };
-
-    this.guessBank.push(letter);
-
-    for (i = 0; i < this.answerKey.length ; i++) {
-        if (letter === this.answerKey[i]) {
-            matchFlag = true;
-            this.userHits[i] = letter;
-        };
-    };
-
-    if (!matchFlag) {
-        this.userLives--;
-        
-        if (this.userLives < 1) {
-            throw('gameOver')
-        };
-    };
-
-    return matchFlag;
-
-};
 
 instanceGame = function (word) {
     // Takes a word and creates a fresh instance of the game using that word, with the user's progress set to 0.
@@ -394,6 +358,42 @@ instanceGame = function (word) {
         userHits: emptyListOfLength(answerKey),
         guessBank: [],
         userLives: STRIKES
+
+        guess : function (letter) {
+            // Takes in a single letter guess for 'letter'. Only minimal parsing is done here, so catching invalid input should be done before we get here.
+            // Takes a letter from the user. Parses it. Checks to make sure it wasn't guessed already.
+            // Then iterates through the answer list looking for matches.
+            // If a match is found then a flag is set to true denoting that the user guessed correctly.
+            // Additionally, ever time there is a hit on the answer key, the corresponding position in userHits is filled in.
+            // If the use gets no matches, then userLives is decremented and we check to make sure the user hasn't lost all lives.
+            // The boolean value of the matchFlag is returned at the end.
+            letter = letter.lower().strip();
+            let matchFlag = false; 
+        
+            if (!(this.guessBank.includes(letter))) {
+                throw('alreadyUsedLetter');
+            };
+        
+            this.guessBank.push(letter);
+        
+            for (i = 0; i < this.answerKey.length ; i++) {
+                if (letter === this.answerKey[i]) {
+                    matchFlag = true;
+                    this.userHits[i] = letter;
+                };
+            };
+        
+            if (!matchFlag) {
+                this.userLives--;
+                
+                if (this.userLives < 1) {
+                    throw('gameOver')
+                };
+            };
+        
+            return matchFlag;
+        
+        }
 
     };
 };
