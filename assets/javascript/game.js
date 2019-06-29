@@ -354,12 +354,13 @@ instanceGame = function (word) {
     // Takes a word and creates a fresh instance of the game using that word, with the user's progress set to 0.
     //
     return {
+        answer: word,
         answerKey: wordSlicer(word),
-        userHits: emptyListOfLength(answerKey),
+        userHits: emptyListOfLength(this.answerKey),
         guessBank: [],
-        userLives: STRIKES
+        userLives: STRIKES,
 
-        guess : function (letter) {
+        guess: function (letter) {
             // Takes in a single letter guess for 'letter'. Only minimal parsing is done here, so catching invalid input should be done before we get here.
             // Takes a letter from the user. Parses it. Checks to make sure it wasn't guessed already.
             // Then iterates through the answer list looking for matches.
@@ -405,6 +406,8 @@ instanceGame = function (word) {
 const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
 // Prints out user's progress on the game word. Starts as all blanks, with letters being filled in as the user guesses them.
+// This is basically a method of the game state object, so must be called using the call method
+// Not making it an actual method because it's part of the console version of the game which exists only for debugging anyway. 
 printGameState = function() {
     console.log(this.userHits.join(' '))
     console.log(`You have ${this.userLives} lives left.`)
@@ -434,18 +437,45 @@ getNewGuess = function () {
 
 // The purpose of this function is to make the game playable in the console, for the purpose of testing.
 // It has no user-facing function and won't be used in release versions of this game.
-runInConsoleMode = function(game) {
-    game = instanceGame()
+runInConsoleMode = function(wrd) {
+    const game = instanceGame(wrd);
+    let turnResult;
 
-    while (true) { // Execute until break;
+    while (true) { // Execute forever until break
 
         printGameState.call(game);
 
         try {
-            guess.call(game, getNewGuess())
+            turnResult = game.guess(getNewGuess())
         } catch(e) {
+            if (e === 'alreadyUsedLetter') {
+                console.log("You already guessed that one!");
+                continue;
+            } else if (e === 'gameOver'){
+                break;
+            } else {
+                throw(e) // I don't want to catch any errors that I'm not handling, so I'll throw back anything that isn't what I'm trying to catch. 
+            };
 
         };
+
+        if (turnResult) {
+            console.log("You got it!");
+        } else {
+            console.log("Sorry, that was not one of the letters.")
+        };
     };
-    
+
+    if (game.userHits.contains('_')) {
+        console.log("G A M E  O V E R")
+        console.log(`The word was ${game.answer}`)
+    } else {
+        console.log('Y O U  W I N !')
+        console.log('Congradulations!')
+    };
+
 };
+
+// To Run DEBUG Console Mode:
+
+runInConsoleMode(getWord());
