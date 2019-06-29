@@ -2,12 +2,6 @@
 //
 //
 
-// The purpose of this function is to make the game playable in the console, for the purpose of testing.
-// It has no user-facing function and won't be used in release versions of this game.
-runInConsoleMode = function(game) {
-    pass
-};
-
 // How many incorrect guesses the user is allowed before they lose the game:
 const LIVES = 6
 
@@ -402,4 +396,55 @@ instanceGame = function (word) {
         userLives: STRIKES;
 
     };
+};
+
+// ----------------------------------------------------------- //
+// Below is all just for running the game in the console and should not be needed for in-browser execution of the game:
+// ----------------------------------------------------------- //
+
+const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+
+// Prints out user's progress on the game word. Starts as all blanks, with letters being filled in as the user guesses them.
+printGameState = function() {
+    console.log(this.userHits.join(' '))
+    console.log('\n')
+};
+
+getNewGuess = function () {
+    while (true) {
+        console.log("Please enter a guess:\n>> ");
+        uInput = readline();
+        uInput = uInput.trim().toLowerCase();
+        console.log(`DEBUG: You entered ${uInput}`);
+
+        if (uInput.length > 1) {
+            console.log("Your guess must be only one single letter.");
+            continue;
+        } else if (!(alphabet.contains(uInput))) {
+            console.log(`${uInput} is not a recognized letter. Please pick a letter out of the standard English alphabet.`)
+            continue;
+        };
+        
+        return uInput;
+
+    };
+        
+};
+
+// The purpose of this function is to make the game playable in the console, for the purpose of testing.
+// It has no user-facing function and won't be used in release versions of this game.
+runInConsoleMode = function(game) {
+    game = instanceGame()
+
+    while (true) { // Execute until break;
+
+        printGameState.call(game);
+
+        try {
+            guess.call(game, getNewGuess())
+        } catch(e) {
+
+        };
+    };
+    
 };
