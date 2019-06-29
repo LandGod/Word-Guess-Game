@@ -361,7 +361,7 @@ guess = function (letter) {
     letter = letter.lower().strip();
     let matchFlag = false; 
 
-    if (!(this.guessBank.includes(letter)) {
+    if (!(this.guessBank.includes(letter))) {
         throw('alreadyUsedLetter');
     };
 
@@ -390,10 +390,10 @@ instanceGame = function (word) {
     // Takes a word and creates a fresh instance of the game using that word, with the user's progress set to 0.
     //
     return {
-        answerKey: wordSlicer(word);
-        userHits: emptyListOfLength(answerKey);
-        guessBank: [];
-        userLives: STRIKES;
+        answerKey: wordSlicer(word),
+        userHits: emptyListOfLength(answerKey),
+        guessBank: [],
+        userLives: STRIKES
 
     };
 };
@@ -407,6 +407,7 @@ const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p
 // Prints out user's progress on the game word. Starts as all blanks, with letters being filled in as the user guesses them.
 printGameState = function() {
     console.log(this.userHits.join(' '))
+    console.log(`You have ${this.userLives} lives left.`)
     console.log('\n')
 };
 
