@@ -399,8 +399,11 @@ instanceGame = function (word) {
     };
 };
 
+/*
 // ----------------------------------------------------------- //
-// Below is all just for running the game in the console and should not be needed for in-browser execution of the game:
+// Below is all just for running the game in the console.
+// Currently it doesn't work and trying to get it to work is starting to feel like more work than just implementing this in browser.
+// So this feature set is being abandonded. 
 // ----------------------------------------------------------- //
 
 const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
@@ -418,7 +421,7 @@ getNewGuess = function () {
         let uInput
     while (true) {
         console.log("Please enter a guess:\n>> ");
-        uInput = readline();
+        uInput = rl.prompt();
         uInput = uInput.trim().toLowerCase();
         console.log(`DEBUG: You entered ${uInput}`);
 
@@ -481,3 +484,5 @@ runInConsoleMode = function(wrd) {
 // To Run DEBUG Console Mode:
 
 runInConsoleMode(getWord());
+
+*/ 
