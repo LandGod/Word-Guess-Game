@@ -8,8 +8,12 @@ runInConsoleMode = function(game) {
     pass
 };
 
+// How many incorrect guesses the user is allowed before they lose the game:
+const LIVES = 6
+
 // 4664 words to use during the game. This helps to keep things fresh for the user:
-const wordList = ["have", "that", "with", "this", "they", "from", "that", "what", "their", "would", "make", "about", "know", "will", "time", 
+const wordList = [
+    "have", "that", "with", "this", "they", "from", "that", "what", "their", "would", "make", "about", "know", "will", "time", 
 "there", "year", "think", "when", "which", "them", "some", "people", "take", "into", "just", "your", "come", "could", "than", 
 "like", "other", "then", "more", "these", "want", "look", "first", "also", "because", "more", "find", "here", "thing", "give", 
 "many", "well", "only", "those", "tell", "very", "even", "back", "good", "woman", "through", "life", "child", "there", "work", 
@@ -319,14 +323,83 @@ const wordList = ["have", "that", "with", "this", "they", "from", "that", "what"
 "honestly", "troubled", "twentieth", "balanced", "foreigner", "launch", "convenience", "delight", "weave", "timber", "till", "accurately", "plea", "bulb", "copy", 
 "flying", "sustainable", "devil", "bolt", "cargo", "spine", "seller", "skilled", "managing", "public", "marine", "dock", "organized", "diplomat", "boring", 
 "sometime", "summary", "missionary", "epidemic", "fatal", "trim", "warehouse", "accelerate", "butterfly", "bronze", "drown", "inherent", "praise", "nationwide", "spit", 
-"harvest", "kneel", "vacuum", "selected", "dictate", "stereotype", "sensor", "laundry", "manual", "pistol", "naval", "plaintiff", "class", "apology"];
+"harvest", "kneel", "vacuum", "selected", "dictate", "stereotype", "sensor", "laundry", "manual", "pistol", "naval", "plaintiff", "class", "apology"
+];
 
 randInt = function (min, max) {
     //Returns and random whole number between the specified minimum and maximum (inclusive)
+    //Definitely just copy/pasted this from W3 Scools
     return Math.floor(Math.random() * (max - min + 1) ) + min;
-}
+};
 
 getWord = function(){
     // Runs randInt with a minimum of 1 and a maximum of the size of our array of words
-    return randInt(wordList.length, 1)
-}
+    return randInt(wordList.length, 1);
+};
+
+wordSlicer = function (wholeWord) {
+    // Iterates through a string, appending each letter in turn to a list. Returns the list when done iterating. 
+    let letterList = [];  // Instantiates a list to add letters to
+    for (i = 0; i < wholeWord.length; i++ ) {  // Start at zero and add one each loop. Break when i == the length of the word (since that is one past the last index of string slices)
+        letterList.push(wholeWord[i])  // Adds the next letter in the word to the list 
+    };
+    return letterList;
+};
+
+emptyListOfLength = function (key) {
+    // Creates an array where every item is '_'. The number of items is equal to that of the array provided in the 'key' argument
+    let lengthOfBlanks = [];
+    for (i = key.length; i >0; i--) {
+        emptyList.push('_')
+    };
+    return lengthOfBlanks;
+};
+
+guess = function (letter) {
+    // This function should be called using the 'call' method and have the instance of the game that it's operating within passed to it
+    // Takes in a single letter guess for 'letter'. Only minimal parsing is done here, so catching invalid input should be done before we get here.
+    // Takes a letter from the user. Parses it. Checks to make sure it wasn't guessed already.
+    // Then iterates through the answer list looking for matches.
+    // If a match is found then a flag is set to true denoting that the user guessed correctly.
+    // Additionally, ever time there is a hit on the answer key, the corresponding position in userHits is filled in.
+    // If the use gets no matches, then userLives is decremented and we check to make sure the user hasn't lost all lives.
+    // The boolean value of the matchFlag is returned at the end.
+    letter = letter.lower().strip();
+    let matchFlag = false; 
+
+    if (!(this.guessBank.includes(letter)) {
+        throw('alreadyUsedLetter');
+    };
+
+    this.guessBank.push(letter);
+
+    for (i = 0; i < this.answerKey.length ; i++) {
+        if (letter === this.answerKey[i]) {
+            matchFlag = true;
+            this.userHits[i] = letter;
+        };
+    };
+
+    if (!matchFlag) {
+        this.userLives--;
+        
+        if (this.userLives < 1) {
+            throw('gameOver')
+        };
+    };
+
+    return matchFlag;
+
+};
+
+instanceGame = function (word) {
+    // Takes a word and creates a fresh instance of the game using that word, with the user's progress set to 0.
+    //
+    return {
+        answerKey: wordSlicer(word);
+        userHits: emptyListOfLength(answerKey);
+        guessBank: [];
+        userLives: STRIKES;
+
+    };
+};
