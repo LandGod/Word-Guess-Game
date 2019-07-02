@@ -1,9 +1,15 @@
-// 
+// TODO: 1) Add a protection that prevents the user from being able to send input when the program is not ready for it.
 //
 //
 
 // How many incorrect guesses the user is allowed before they lose the game:
-const LIVES = 6
+const LIVES = 6;
+
+// Some flavor text for the console look of the game
+const flavorText = "L337H4X0R69 BellLabsTestMachine004 ~/mainframe/honeypot/important_data "
+
+// Basically a max height of our console's output section. Measured by number of lines of text.
+const OUTPUTMAXLINES = 100;
 
 // 4664 words to use during the game. This helps to keep things fresh for the user:
 const wordList = [
@@ -320,6 +326,9 @@ const wordList = [
     "harvest", "kneel", "vacuum", "selected", "dictate", "stereotype", "sensor", "laundry", "manual", "pistol", "naval", "plaintiff", "class", "apology"
 ];
 
+// Used for checking user input.
+const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
 randInt = function (min, max) {
     //Returns and random whole number between the specified minimum and maximum (inclusive)
     //Definitely just copy/pasted this from W3 Scools
@@ -399,11 +408,83 @@ instanceGame = function (word) {
     };
 };
 
+const terminalBuffer = {
+    // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
+    // This object will include a method for printing out only first x lines of our total output thus far
+    // We'll base the total number of lines on an easily changeable constant OUTPUTMAXLINES
+    buff : [flavorText], // The actual list we store all this into
+
+    add : function (text, cancel=false) { 
+        // Simply adds input to the end of the list, BUT removes the first item in the list every time it does this when we hit our line limit
+        if (!cancel){
+            if (this.buff.lenght >= OUTPUTMAXLINES) {
+                buff.pop();
+            };
+    
+            this.buff.push(text);
+        };
+        
+    },
+
+    reset : function () {
+        // empties the buffer by reseting buff to empty list
+        this.buff = []
+    },
+    
+
+};
+
 // ---------------------------- UI Elements ---------------------------- //
 
-runGUI = function {
+let gameOut = document.getElementById("gameWindowWrite"); //All out game output should be appended on a new line here
+let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
+let qType; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
+let currentUserInput = false; // We'll use this variable as a place for inputHandler to dump usable data. We'll reset it to false when not in use so that we don't accidently reuse old data.
 
-}
+
+// A function for parsing user input based on what is currently expected.
+inputHandler = function (event) {
+
+    // If the key pressed wasn't [Enter], then ignore it.
+    if (event.keyCode !== 13) {
+        console.log("DEBUG: User pressed a key that was not [enter]")
+        return false;
+    };
+
+    // If the key prssed was [Enter] then we'll attempt to parse the text currently inside the text box.
+    console.log("DEBUG: User pressed a key that WAS [enter].")
+    let uIn = gameIn.value.trim().toLowerCase();
+    // Having recorded the user's input, we will then clear out the user's text input window so they are free to type somethign else without having to clear it themeselves.
+    gameIn.value = '' 
+    console.log(`DEBUG: User inputed "${uIn}"`)
+    
+    // If it's an empty string after we peform the trim method, then we'll send a message, via the terminalBuffer object, telling the user that it was invalid input.
+    if (uIn.length < 1) {
+        currentUserInput = false;
+        terminalBuffer.add("Invalid Input!");
+        terminalBuffer.add(flavorText);
+    };
+
+    // Beside being a blank string, we'll need to know what is expected before we can make further determinations about its validity
+    // Thus we'll use the switch form to find the appropriate behavior from now on
+    // Note that if the qType variable was not properly set, prior to getting the user input, then this function may not work properly. 
+    switch (qType) {
+        // The first case will be the user making a guess.
+        case 'guess': 
+            if ((uIn.length > 1) || !(alphabet.contains(uIn))) {
+                currentUserInput = false;
+                // Update the terminal buffer with an invalid input message. 
+            } else {
+                currentUserInput = uIn;
+                // Call instanceGame.guess() and update the terminal buffer
+            };
+        case 'yesNo':
+            // Do something
+    };
+};
+
+
+gameIn.addEventListener("keydown", inputHandler);
 
 
 
