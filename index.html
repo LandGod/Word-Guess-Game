@@ -32,11 +32,22 @@
     
     
     <main class="container">
+
+        <!-- This whil be where the game content is printed. I will automatically push the user input down. -->
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="d-inline-block border w-100 h-100" id="gameWindow">
+                <div class="d-inline-block border w-100 h-100" id="gameWindowWrite">
 
                 </div>
+            </div>
+        </div>
+        
+        <!-- This will be an invisible text box that the user can enter their guesses into -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <input class="d-inline-block border w-100 h-100" id="gameWindowRead" >
+
+            </input>
             </div>
         </div>
     </main>
@@ -47,6 +58,7 @@
         </div>
     </footer>
 
+<script src="assets/javascript/game.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
