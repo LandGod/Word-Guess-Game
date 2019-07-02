@@ -1,0 +1,4 @@
+#gameWindow {
+    height: calc(1045px - 20px);
+    width: calc(1303px - 20px);
+}

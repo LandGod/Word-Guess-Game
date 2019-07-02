@@ -399,6 +399,17 @@ instanceGame = function (word) {
     };
 };
 
+// ---------------------------- UI Elements ---------------------------- //
+
+runGUI = function {
+
+}
+
+
+
+
+
+
 /*
 // ----------------------------------------------------------- //
 // Below is all just for running the game in the console.
