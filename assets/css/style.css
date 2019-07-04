@@ -1,4 +1,25 @@
-#gameWindow {
-    height: calc(1045px - 20px);
-    width: calc(1303px - 20px);
+body {
+    background-image: url(../images/futureRetroLandscape.jpg);
+    background-size: cover;
+}
+
+textarea, select, input, button { 
+    outline: none; 
+}
+
+#gameWindowWrite {
+    background-color: black;
+    color: #34e326;
+    border-bottom: 0px !important;
+}
+
+#gameWindowRead {
+    background-color: black;
+    color: #34e326;
+    border: none;
+    border-top: 0px !important;
+}
+
+.footerFixer {
+    min-height: calc(100vh - 112px);
 }
