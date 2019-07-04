@@ -1,4 +1,4 @@
-// TODO: 1) Add a protection that prevents the user from being able to send input when the program is not ready for it.
+// TODO: 1) Add a protection that prevents the user from being able to send input when the program is not ready for it. 
 //
 //
 
@@ -6,10 +6,10 @@
 const LIVES = 6;
 
 // Some flavor text for the console look of the game
-const flavorText = "L337H4X0R69 BellLabsTestMachine004 ~/mainframe/honeypot/important_data "
+const flavorText = "c/vault/top_secret/ "
 
 // Basically a max height of our console's output section. Measured by number of lines of text.
-const OUTPUTMAXLINES = 100;
+const OUTPUTMAXLINES = 20;
 
 // 4664 words to use during the game. This helps to keep things fresh for the user:
 const wordList = [
@@ -328,6 +328,11 @@ const wordList = [
 
 // Used for checking user input.
 const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+const yess = ['y', 'yes', 'yeah', 'affirmative', 'absolutely'];
+const nos = ['n', 'no', 'nah', 'negative', 'no way'];
+
+// Will hold the game instance.
+let game;
 
 randInt = function (min, max) {
     //Returns and random whole number between the specified minimum and maximum (inclusive)
@@ -337,7 +342,7 @@ randInt = function (min, max) {
 
 getWord = function(){
     // Runs randInt with a minimum of 1 and a maximum of the size of our array of words
-    return randInt(wordList.length, 1);
+    return wordList[randInt(wordList.length, 1)];
 };
 
 wordSlicer = function (wholeWord) {
@@ -353,7 +358,7 @@ emptyListOfLength = function (key) {
     // Creates an array where every item is '_'. The number of items is equal to that of the array (or string characters) provided in the 'key' argument
     let lengthOfBlanks = [];
     for (i = key.length; i >0; i--) {
-        emptyList.push('_')
+        lengthOfBlanks.push('_')
     };
     return lengthOfBlanks;
 };
@@ -377,10 +382,10 @@ instanceGame = function (word) {
             // Additionally, ever time there is a hit on the answer key, the corresponding position in userHits is filled in.
             // If the use gets no matches, then userLives is decremented and we check to make sure the user hasn't lost all lives.
             // The boolean value of the matchFlag is returned at the end.
-            letter = letter.lower().strip();
+            letter = letter.toLowerCase().trim();
             let matchFlag = false; 
         
-            if (!(this.guessBank.includes(letter))) {
+            if (this.guessBank.includes(letter)) {
                 throw('alreadyUsedLetter');
             };
         
@@ -408,21 +413,27 @@ instanceGame = function (word) {
     };
 };
 
+
+// ---------------------------- UI Elements ---------------------------- //
+
+let gameOut = document.getElementById("gameWindowWrite"); //All out game output should be appended on a new line here
+let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
+let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
+let currentUserInput = false; // We'll use this variable as a place for inputHandler to dump usable data. We'll reset it to false when not in use so that we don't accidently reuse old data.
+
 const terminalBuffer = {
     // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
     // This object will include a method for printing out only first x lines of our total output thus far
     // We'll base the total number of lines on an easily changeable constant OUTPUTMAXLINES
     buff : [flavorText], // The actual list we store all this into
 
-    add : function (text, cancel=false) { 
+    add : function (text) { 
         // Simply adds input to the end of the list, BUT removes the first item in the list every time it does this when we hit our line limit
-        if (!cancel){
-            if (this.buff.lenght >= OUTPUTMAXLINES) {
-                buff.pop();
-            };
-    
-            this.buff.push(text);
+        if (this.buff.length >= OUTPUTMAXLINES) {
+            this.buff.shift();
         };
+
+        this.buff.push(text);
         
     },
 
@@ -431,16 +442,29 @@ const terminalBuffer = {
         this.buff = []
     },
     
+    print: function () {
+        // Writes the content of buff to the game window's Write section, ie: buff >> gameOut
+        gameOut.innerHTML = this.buff.join('<br>')
+    },
+
+    message: function (text=currentUserInput) {
+        if (!text) {
+            throw('No current user input!')
+        };
+        terminalBuffer.add(text);
+        terminalBuffer.add(' ');
+        terminalBuffer.add(flavorText);
+        terminalBuffer.print();
+        currentUserInput = false;
+
+    },
+
+    gameState : function (gameInstance) {
+        // Grabs the userHits array from a game instance object and prints it out for the user to see.
+        this.add(gameInstance.userHits.join(' ')); 
+    }
 
 };
-
-// ---------------------------- UI Elements ---------------------------- //
-
-let gameOut = document.getElementById("gameWindowWrite"); //All out game output should be appended on a new line here
-let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
-let qType; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
-let currentUserInput = false; // We'll use this variable as a place for inputHandler to dump usable data. We'll reset it to false when not in use so that we don't accidently reuse old data.
-
 
 // A function for parsing user input based on what is currently expected.
 inputHandler = function (event) {
@@ -454,40 +478,104 @@ inputHandler = function (event) {
     // If the key prssed was [Enter] then we'll attempt to parse the text currently inside the text box.
     console.log("DEBUG: User pressed a key that WAS [enter].")
     let uIn = gameIn.value.trim().toLowerCase();
+
     // Having recorded the user's input, we will then clear out the user's text input window so they are free to type somethign else without having to clear it themeselves.
     gameIn.value = '' 
     console.log(`DEBUG: User inputed "${uIn}"`)
     
     // If it's an empty string after we peform the trim method, then we'll send a message, via the terminalBuffer object, telling the user that it was invalid input.
     if (uIn.length < 1) {
-        currentUserInput = false;
-        terminalBuffer.add("Invalid Input!");
-        terminalBuffer.add(flavorText);
+        terminalBuffer.message(' ')
+        return false;
     };
 
     // Beside being a blank string, we'll need to know what is expected before we can make further determinations about its validity
     // Thus we'll use the switch form to find the appropriate behavior from now on
     // Note that if the qType variable was not properly set, prior to getting the user input, then this function may not work properly. 
+    console.log(`DEBUG: qType is currently set to ${qType}`)
     switch (qType) {
         // The first case will be the user making a guess.
         case 'guess': 
-            if ((uIn.length > 1) || !(alphabet.contains(uIn))) {
-                currentUserInput = false;
-                // Update the terminal buffer with an invalid input message. 
+            // First we check to make sure that the guess is only one character and that that character is from the english alphabet.
+            if ((uIn.length > 1) || !(alphabet.includes(uIn))) {
+                console.log(`DEBUG: Unsuitable command: ${uIn}`)
+                terminalBuffer.message(`bash: ${uIn}: command not found`); 
             } else {
-                currentUserInput = uIn;
-                // Call instanceGame.guess() and update the terminal buffer
+                // This is a try due to 2 posibilities where the game state object will intentionally throw an error
+                try {
+                    if (game.guess(uIn)) {
+                        terminalBuffer.add('Correct!');
+                        terminalBuffer.gameState(game);
+                        terminalBuffer.print();
+                    } else {
+                        terminalBuffer.add(`Incorrect! Only ${game.userLives} chances remaining before security lockout.`);
+                        terminalBuffer.gameState(game);
+                        terminalBuffer.print();
+                    };
+                } 
+                // Because certain game events are handled with exceptions, we need to handle them.
+                catch(e) {
+                    if (e === 'gameOver') {
+                        // Deal with gameover
+                        
+                    } else if (e === 'gameWin') {
+                        //deal with a winning gameover
+                        //TODO: Make this a thing in the game instance object.
+
+                    } else if (e === 'alreadyUsedLetter') {
+                        // deal with user guessing an already guessed letter
+                    } else {
+                        // If the exception is not one of the one's we're expecting, we'll throw it back, so we can at least see what went wrong.
+                        throw(e)
+                    };
+                };
             };
-        case 'yesNo':
-            // Do something
+            return;
+        case 'begin':
+            // If user responds in the affirmative, create a new game object inside of the global game variable.
+            if (yess.includes(uIn)) {
+                game = instanceGame(getWord());
+                qType = 'guess';
+                terminalBuffer.add('--------------------------------------------------------------')
+                terminalBuffer.add('Mainframe hacking in progress...')
+                terminalBuffer.gameState(game);
+                terminalBuffer.add('You must guess each letter of the password individually.')
+                terminalBuffer.message('Enter your first guess below:')
+                return;
+            // If the user responds in the negative
+            } else if (nos.includes(uIn)) {
+                currentUserInput = 'n';
+                return;
+            } else {
+                terminalBuffer.message(`bash: ${uIn}: command not found`); 
+                return;
+            };
+        default:
+            console.log(`DEBUG: switch activated at default`)
+            terminalBuffer.message(`bash: ${uIn}: command not found`); 
+            currentUserInput = false;
+            return;
+
     };
 };
 
+// Setup game when user lands on the page:
+terminalBuffer.add("As we all know, most passwords are common english words of at least 4 letters.");
+terminalBuffer.add("Trust me, these are just facts.");
+terminalBuffer.add("You are a hacker in the year 2047.");
+terminalBuffer.add("Advanced deep learning algorithms and A.I. allow you to penetrate even the most secure mainfraims.");
+terminalBuffer.add("All you need is their common enlish word password and your advanced RSA6 anti-firewall crack");
+terminalBuffer.add("program can de-salt the security hashbrowns and circumvent the 7-factor authentication.");
+terminalBuffer.add("Did I mention the deep learning and algorithms? You've got tons of them!");
+terminalBuffer.add("It's all very technical of course. All you need to know, is that to get inside, you'll need to correctly");
+terminalBuffer.add(`figure out one common english word and you only have ${LIVES} chances to guess wrong!`);
+terminalBuffer.add("So buckle up! And welcome, to the world's most accurate hacking simulation!");
+terminalBuffer.add("Are you ready to begin? (y/n)");
+terminalBuffer.print();
+qType = 'begin';
 
+// Start listening for user input:
 gameIn.addEventListener("keydown", inputHandler);
-
-
-
 
 
 
