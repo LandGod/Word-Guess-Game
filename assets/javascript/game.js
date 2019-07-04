@@ -444,7 +444,7 @@ const terminalBuffer = {
     // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
     // This object will include a method for printing out only first x lines of our total output thus far
     // We'll base the total number of lines on an easily changeable constant OUTPUTMAXLINES
-    buff : [flavorText], // The actual list we store all this into
+    buff : [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', flavorText], // The actual list we store all this into
 
     add : function (text) { 
         // Simply adds input to the end of the list, BUT removes the first item in the list every time it does this when we hit our line limit
