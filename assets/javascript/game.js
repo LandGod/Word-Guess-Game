@@ -363,6 +363,20 @@ emptyListOfLength = function (key) {
     return lengthOfBlanks;
 };
 
+trimDollarSign = function (str) {
+    // Takes a string and returns the same string, but with any '$' characters removed.
+    let output = [];
+
+    for (i in str) {
+        if (!(str[i] === '$')) {
+            output.push(str[i]);
+        };
+    };
+
+    return output.join('');
+
+};
+
 // Array comparison method. Compares the array in a2 to the array that the method is called on. Returns true if both arrays have the same values in the same order. 
 Array.prototype.equals = function (a2) {
     if (!a2) return false;
@@ -444,7 +458,7 @@ const terminalBuffer = {
     // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
     // This object will include a method for printing out only first x lines of our total output thus far
     // We'll base the total number of lines on an easily changeable constant OUTPUTMAXLINES
-    buff : [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', flavorText], // The actual list we store all this into
+    buff : [' ', ' ', ' ', ' ', ' ', ' ', ' ', flavorText], // The actual list we store all this into
 
     add : function (text) { 
         // Simply adds input to the end of the list, BUT removes the first item in the list every time it does this when we hit our line limit
@@ -496,10 +510,12 @@ inputHandler = function (event) {
 
     // If the key prssed was [Enter] then we'll attempt to parse the text currently inside the text box.
     console.log("DEBUG: User pressed a key that WAS [enter].")
-    let uIn = gameIn.value.trim().toLowerCase();
+    let uIn = trimDollarSign(gameIn.value);
+    uIn = uIn.trim().toLowerCase();
+    
 
     // Having recorded the user's input, we will then clear out the user's text input window so they are free to type somethign else without having to clear it themeselves.
-    gameIn.value = '' 
+    gameIn.value = '$ ' 
     console.log(`DEBUG: User inputed "${uIn}"`)
     
     // If it's an empty string after we peform the trim method, then we'll send a message, via the terminalBuffer object, telling the user that it was invalid input.
@@ -622,11 +638,12 @@ terminalBuffer.add("As we all know, most passwords are common english words of a
 terminalBuffer.add("Trust me, these are just facts.");
 terminalBuffer.add("You are a hacker in the year 2047.");
 terminalBuffer.add("Advanced deep learning algorithms and A.I. allow you to penetrate even the most secure mainfraims.");
-terminalBuffer.add("All you need is their common enlish word password and your advanced RSA6 anti-firewall crack");
+terminalBuffer.add("All you need is their common English word password and your advanced RSA6 anti-firewall crack");
 terminalBuffer.add("program can de-salt the security hashbrowns and circumvent the 7-factor authentication.");
 terminalBuffer.add("Did I mention the deep learning and algorithms? You've got tons of them!");
 terminalBuffer.add("It's all very technical of course. All you need to know, is that to get inside, you'll need to correctly");
 terminalBuffer.add(`figure out one common english word and you only have ${LIVES} chances to guess wrong!`);
+terminalBuffer.add("You may think this sounds a lot like the game Hang Man. But trust me, it couldn't be more different!")
 terminalBuffer.add("So buckle up! And welcome, to the world's most accurate hacking simulation!");
 terminalBuffer.add("Are you ready to begin? (y/n)");
 terminalBuffer.print();
@@ -634,6 +651,8 @@ qType = 'begin';
 
 // Start listening for user input:
 gameIn.addEventListener("keydown", inputHandler);
+gameIn.value = '$ '
+gameIn.focus();
 
 
 
