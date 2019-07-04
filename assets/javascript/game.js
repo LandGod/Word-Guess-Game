@@ -363,6 +363,19 @@ emptyListOfLength = function (key) {
     return lengthOfBlanks;
 };
 
+// Array comparison method. Compares the array in a2 to the array that the method is called on. Returns true if both arrays have the same values in the same order. 
+Array.prototype.equals = function (a2) {
+    if (!a2) return false;
+
+    if (this.length != a2.length) return false;
+
+    for (i in this) {
+        if (this[i] != a2[i]) return false;
+    };
+
+    return true;
+};
+
 
 instanceGame = function (word) {
     // Takes a word and creates a fresh instance of the game using that word, with the user's progress set to 0.
@@ -402,13 +415,19 @@ instanceGame = function (word) {
                 this.userLives--;
                 
                 if (this.userLives < 1) {
-                    throw('gameOver')
+                    console.log("DEBUG: Activating lose condition in game instance")
+                    throw('gameOver');
                 };
             };
-        
+            
+            if (this.answerKey.equals(this.userHits)) {
+                console.log("DEBUG: Activating win condition in game instance")
+                throw('gameWin');
+            };
+
             return matchFlag;
         
-        }
+        },
 
     };
 };
@@ -503,34 +522,72 @@ inputHandler = function (event) {
             } else {
                 // This is a try due to 2 posibilities where the game state object will intentionally throw an error
                 try {
+                    // The game.guess() method returns true if the user guesses correctly, and false if they guess wrong. 
                     if (game.guess(uIn)) {
+                        // If the use guessed correctly, but hasn't won yet, we just congradulate them, and print the current game state.
                         terminalBuffer.add('Correct!');
                         terminalBuffer.gameState(game);
                         terminalBuffer.print();
                     } else {
+                        // In the case of a wrong guess, we tell the user they were wrong and let them know how many remaining lives the have.
                         terminalBuffer.add(`Incorrect! Only ${game.userLives} chances remaining before security lockout.`);
                         terminalBuffer.gameState(game);
                         terminalBuffer.print();
                     };
                 } 
-                // Because certain game events are handled with exceptions, we need to handle them.
+                // Because certain game events are handled with exceptions, we need to handle them. The exception labels are pretty self explanatory. 
                 catch(e) {
-                    if (e === 'gameOver') {
-                        // Deal with gameover
-                        
-                    } else if (e === 'gameWin') {
-                        //deal with a winning gameover
-                        //TODO: Make this a thing in the game instance object.
+                    console.log(`DEBUG: Caught: '${e}'`)
+                    switch (e) {
+                        case 'gameOver':
+                            // If the user loses, we inform them, then reset the game and ask if they wan't to play again.
+                            // We must add the messages first so we can cue everything up in the terminalBuffer before re-setitng the game object.
+                            console.log("DEBUG: Activating lose condition in inputHandler!")
+                            terminalBuffer.add('Incorrect!');
+                            terminalBuffer.gameState(game);
+                            terminalBuffer.add('SECURITY LOCKOUT ACTIVATED!!');
+                            terminalBuffer.add('GAME OVER!');
+                            terminalBuffer.add(' ');
+                            terminalBuffer.add('Play again? (y/n)');
+                            // Then we reset the game and prepare for y/n input to restart the game or not.
+                            game = undefined;
+                            qType = 'begin';
+                            // Then print the message.
+                            terminalBuffer.print();
+                            break;
+                            
+                        case 'gameWin':
+                            // If the user wins, we congradulate them and then reset the game.
+                            // We must add the congradulations first so we can cue everything up in the terminalBuffer before re-setitng the game object.
+                            console.log("DEBUG: Activating win condition in inputHandler!")
+                            terminalBuffer.add('Correct!');
+                            terminalBuffer.gameState(game);
+                            terminalBuffer.add('HACK SUCCESSFULL!!');
+                            terminalBuffer.add('YOU WIN!!');
+                            terminalBuffer.add(' ');
+                            terminalBuffer.add('Play again? (y/n)');
+                            // Then we reset the game and prepare for y/n input to restart the game or not.
+                            game = undefined;
+                            qType = 'begin';
+                            // Then print the message.
+                            terminalBuffer.print();
+                            break;
+    
+                        case 'alreadyUsedLetter':
+                            terminalBuffer.add(`${uIn} was already tried. Try a different letter:`);
+                            terminalBuffer.print();
+                            break;
 
-                    } else if (e === 'alreadyUsedLetter') {
-                        // deal with user guessing an already guessed letter
-                    } else {
-                        // If the exception is not one of the one's we're expecting, we'll throw it back, so we can at least see what went wrong.
-                        throw(e)
+                        default: 
+                            // If the exception is not one of the one's we're expecting, we'll throw it back, so we can at least see what went wrong.
+                            throw(e)
+                        };
                     };
+                    
                 };
-            };
+            // no matter what happens in the 'guess' case, we don't want to activate any other cases, so we must return at the end.
             return;
+
         case 'begin':
             // If user responds in the affirmative, create a new game object inside of the global game variable.
             if (yess.includes(uIn)) {
@@ -545,6 +602,7 @@ inputHandler = function (event) {
             // If the user responds in the negative
             } else if (nos.includes(uIn)) {
                 currentUserInput = 'n';
+                // Do something.
                 return;
             } else {
                 terminalBuffer.message(`bash: ${uIn}: command not found`); 
