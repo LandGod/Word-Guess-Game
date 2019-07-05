@@ -572,6 +572,7 @@ inputHandler = function (event) {
                             terminalBuffer.gameState(game);
                             terminalBuffer.add('SECURITY LOCKOUT ACTIVATED!!');
                             terminalBuffer.add('GAME OVER!');
+                            terminalBuffer.add(`The password was '${game.answer}'`)
                             terminalBuffer.add(' ');
                             terminalBuffer.add('Play again? (y/n)');
                             // Then we reset the game and prepare for y/n input to restart the game or not.
