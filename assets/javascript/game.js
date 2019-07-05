@@ -628,9 +628,14 @@ inputHandler = function (event) {
                 terminalBuffer.message('Enter your first guess below:')
                 return;
 
-            // If the user responds in the negative
+            // If the user responds in the negative, blank out the console window and print 'session closed' then turn off the user's ability to interact with the program.
             } else if (nos.includes(uIn)) {
-                // Do something.
+                terminalBuffer.add('Session Closed')
+                for (i = OUTPUTMAXLINES; i > 1; i--) {
+                    terminalBuffer.add(' ');
+                };
+                terminalBuffer.print();
+                gameIn.removeEventListener("keydown", inputHandler);
                 return;
 
             // If the user responds with niether a yes nor no, then we'll just give them the standard BASH response for invalid inputs.
