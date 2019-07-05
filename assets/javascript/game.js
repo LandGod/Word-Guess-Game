@@ -510,6 +510,7 @@ inputHandler = function (event) {
 
     // If the key prssed was [Enter] then we'll attempt to parse the text currently inside the text box.
     console.log("DEBUG: User pressed a key that WAS [enter].")
+    terminalBuffer.add(gameIn.value);
     let uIn = trimDollarSign(gameIn.value);
     uIn = uIn.trim().toLowerCase();
     
