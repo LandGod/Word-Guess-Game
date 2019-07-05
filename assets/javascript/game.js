@@ -622,6 +622,9 @@ inputHandler = function (event) {
             if (yess.includes(uIn)) {
                 game = instanceGame(getWord());
                 qType = 'guess';
+                for (i = 13; i > 0; i--) {
+                    terminalBuffer.add(' ')
+                };
                 terminalBuffer.add('--------------------------------------------------------------')
                 terminalBuffer.add('Mainframe hacking in progress...')
                 terminalBuffer.gameState(game);
