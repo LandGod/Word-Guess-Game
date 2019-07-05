@@ -1,5 +1,5 @@
 // TODO: 1) Add a protection that prevents the user from being able to send input when the program is not ready for it. 
-//
+//       2) Change code in default qType switch in inputHandler such that an error resulting in default being activated is recoverable
 //
 
 // How many incorrect guesses the user is allowed before they lose the game:
@@ -336,7 +336,7 @@ let game;
 
 randInt = function (min, max) {
     //Returns and random whole number between the specified minimum and maximum (inclusive)
-    //Definitely just copy/pasted this from W3 Scools
+    //(Copy/pasted this from W3 Scools)
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 };
 
@@ -377,14 +377,15 @@ trimDollarSign = function (str) {
 
 };
 
-// Array comparison method. Compares the array in a2 to the array that the method is called on. Returns true if both arrays have the same values in the same order. 
-Array.prototype.equals = function (a2) {
-    if (!a2) return false;
 
-    if (this.length != a2.length) return false;
+Array.prototype.equals = function (a2) {
+    // Array comparison method. Compares the array in a2 to the array that the method is called on. Returns true if both arrays have the same values in the same order. 
+    if (!a2) return false; // Array must exist and not be empty
+
+    if (this.length != a2.length) return false; // Must be the same total length
 
     for (i in this) {
-        if (this[i] != a2[i]) return false;
+        if (this[i] != a2[i]) return false; // Each item on the list must be identical for the same index.
     };
 
     return true;
@@ -449,10 +450,12 @@ instanceGame = function (word) {
 
 // ---------------------------- UI Elements ---------------------------- //
 
+// HTML elements that we'll need. Out is where we print data to from the terminalBuffer object. In is the html input field that the user interacts with.
 let gameOut = document.getElementById("gameWindowWrite"); //All out game output should be appended on a new line here
 let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
+
+// Some variables that we'd like to be global to help store data between seperate instances of the same function.
 let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
-let currentUserInput = false; // We'll use this variable as a place for inputHandler to dump usable data. We'll reset it to false when not in use so that we don't accidently reuse old data.
 
 const terminalBuffer = {
     // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
@@ -480,7 +483,8 @@ const terminalBuffer = {
         gameOut.innerHTML = this.buff.join('<br>')
     },
 
-    message: function (text=currentUserInput) {
+    message: function (text) {
+        // A combination of add and print in one that also adds spacing and flavor text.
         if (!text) {
             throw('No current user input!')
         };
@@ -488,7 +492,6 @@ const terminalBuffer = {
         terminalBuffer.add(' ');
         terminalBuffer.add(flavorText);
         terminalBuffer.print();
-        currentUserInput = false;
 
     },
 
@@ -499,49 +502,54 @@ const terminalBuffer = {
 
 };
 
-// A function for parsing user input based on what is currently expected.
+
 inputHandler = function (event) {
+    // A function for parsing user input based on what is currently expected and then calling the appropriate other functions/objects to handle the input.
 
     // If the key pressed wasn't [Enter], then ignore it.
     if (event.keyCode !== 13) {
-        console.log("DEBUG: User pressed a key that was not [enter]")
+        // console.log("DEBUG: User pressed a key that was not [enter]")
         return false;
     };
 
     // If the key prssed was [Enter] then we'll attempt to parse the text currently inside the text box.
-    console.log("DEBUG: User pressed a key that WAS [enter].")
-    terminalBuffer.add(gameIn.value);
-    let uIn = trimDollarSign(gameIn.value);
-    uIn = uIn.trim().toLowerCase();
-    
+    // console.log("DEBUG: User pressed a key that WAS [enter].")
+    terminalBuffer.add(gameIn.value); // First we add the raw input back to terminal buffer so the user can see what they typed, valid or not.
+    let uIn = trimDollarSign(gameIn.value); // Then we remove any dollar signs.
+    uIn = uIn.trim().toLowerCase(); // Then we trim white space and make all letters lowercase. 
+    // console.log(`DEBUG: User inputed "${uIn}"`)
 
     // Having recorded the user's input, we will then clear out the user's text input window so they are free to type somethign else without having to clear it themeselves.
-    gameIn.value = '$ ' 
-    console.log(`DEBUG: User inputed "${uIn}"`)
+    gameIn.value = '$ ' // Putting back a leading dollar sign as we do it, for that terminal feel
+    
     
     // If it's an empty string after we peform the trim method, then we'll send a message, via the terminalBuffer object, telling the user that it was invalid input.
+    // In this case, that means just a blank line, since that's what BASH does.
     if (uIn.length < 1) {
         terminalBuffer.message(' ')
         return false;
     };
 
     // Beside being a blank string, we'll need to know what is expected before we can make further determinations about its validity
-    // Thus we'll use the switch form to find the appropriate behavior from now on
+    // Thus we'll use the switch pattern to find the appropriate behavior from now on
     // Note that if the qType variable was not properly set, prior to getting the user input, then this function may not work properly. 
-    console.log(`DEBUG: qType is currently set to ${qType}`)
+    // Currently the only valid values for qType are 'guess' and 'begin'.
+    // console.log(`DEBUG: qType is currently set to ${qType}`)
     switch (qType) {
         // The first case will be the user making a guess.
         case 'guess': 
             // First we check to make sure that the guess is only one character and that that character is from the english alphabet.
             if ((uIn.length > 1) || !(alphabet.includes(uIn))) {
-                console.log(`DEBUG: Unsuitable command: ${uIn}`)
+                // console.log(`DEBUG: Unsuitable command: ${uIn}`)
                 terminalBuffer.message(`bash: ${uIn}: command not found`); 
+
+            // If it passes that test, it's time to handle it as a valid move in the actual game.
             } else {
                 // This is a try due to 2 posibilities where the game state object will intentionally throw an error
                 try {
                     // The game.guess() method returns true if the user guesses correctly, and false if they guess wrong. 
                     if (game.guess(uIn)) {
-                        // If the use guessed correctly, but hasn't won yet, we just congradulate them, and print the current game state.
+                        // If the user guessed correctly, but hasn't won yet, we just congradulate them, and print the current game state.
                         terminalBuffer.add('Correct!');
                         terminalBuffer.gameState(game);
                         terminalBuffer.print();
@@ -554,12 +562,12 @@ inputHandler = function (event) {
                 } 
                 // Because certain game events are handled with exceptions, we need to handle them. The exception labels are pretty self explanatory. 
                 catch(e) {
-                    console.log(`DEBUG: Caught: '${e}'`)
+                    // console.log(`DEBUG: Caught: '${e}'`)
                     switch (e) {
                         case 'gameOver':
                             // If the user loses, we inform them, then reset the game and ask if they wan't to play again.
                             // We must add the messages first so we can cue everything up in the terminalBuffer before re-setitng the game object.
-                            console.log("DEBUG: Activating lose condition in inputHandler!")
+                            // console.log("DEBUG: Activating lose condition in inputHandler!")
                             terminalBuffer.add('Incorrect!');
                             terminalBuffer.gameState(game);
                             terminalBuffer.add('SECURITY LOCKOUT ACTIVATED!!');
@@ -576,7 +584,7 @@ inputHandler = function (event) {
                         case 'gameWin':
                             // If the user wins, we congradulate them and then reset the game.
                             // We must add the congradulations first so we can cue everything up in the terminalBuffer before re-setitng the game object.
-                            console.log("DEBUG: Activating win condition in inputHandler!")
+                            // console.log("DEBUG: Activating win condition in inputHandler!")
                             terminalBuffer.add('Correct!');
                             terminalBuffer.gameState(game);
                             terminalBuffer.add('HACK SUCCESSFULL!!');
@@ -591,6 +599,8 @@ inputHandler = function (event) {
                             break;
     
                         case 'alreadyUsedLetter':
+                            // If the user tries to guess the same letter twice, we don't want to penalize them, so we just tell them to try again
+                            // They don't lose any lives though.
                             terminalBuffer.add(`${uIn} was already tried. Try a different letter:`);
                             terminalBuffer.print();
                             break;
@@ -607,6 +617,7 @@ inputHandler = function (event) {
 
         case 'begin':
             // If user responds in the affirmative, create a new game object inside of the global game variable.
+            // Then we'll print some instructions to get them started. 
             if (yess.includes(uIn)) {
                 game = instanceGame(getWord());
                 qType = 'guess';
@@ -616,19 +627,25 @@ inputHandler = function (event) {
                 terminalBuffer.add('You must guess each letter of the password individually.')
                 terminalBuffer.message('Enter your first guess below:')
                 return;
+
             // If the user responds in the negative
             } else if (nos.includes(uIn)) {
-                currentUserInput = 'n';
                 // Do something.
                 return;
+
+            // If the user responds with niether a yes nor no, then we'll just give them the standard BASH response for invalid inputs.
             } else {
                 terminalBuffer.message(`bash: ${uIn}: command not found`); 
                 return;
             };
+
+            // And finally, if qType is not set, then anything the user inputs is invalid, so we print the BASH invalid input response.
+            // If the default is ever activated, then the qType variable has gotten messed up somehow. This shoud never happen.
+            // As such, if we ever do get here than the page will reload, since this is not recoverable at this time.
         default:
-            console.log(`DEBUG: switch activated at default`)
-            terminalBuffer.message(`bash: ${uIn}: command not found`); 
-            currentUserInput = false;
+            console.log(`ERROR: qType switch activated at default`)
+            terminalBuffer.message(`FATAL ERROR: Machine will now restart.`); 
+            window.location.reload(); // Reloads the webpage.
             return;
 
     };
@@ -654,93 +671,3 @@ qType = 'begin';
 gameIn.addEventListener("keydown", inputHandler);
 gameIn.value = '$ '
 gameIn.focus();
-
-
-
-/*
-// ----------------------------------------------------------- //
-// Below is all just for running the game in the console.
-// Currently it doesn't work and trying to get it to work is starting to feel like more work than just implementing this in browser.
-// So this feature set is being abandonded. 
-// ----------------------------------------------------------- //
-
-const alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-
-// Prints out user's progress on the game word. Starts as all blanks, with letters being filled in as the user guesses them.
-// This is basically a method of the game state object, so must be called using the call method
-// Not making it an actual method because it's part of the console version of the game which exists only for debugging anyway. 
-printGameState = function() {
-    console.log(this.userHits.join(' '))
-    console.log(`You have ${this.userLives} lives left.`)
-    console.log('\n')
-};
-
-getNewGuess = function () {
-        let uInput
-    while (true) {
-        console.log("Please enter a guess:\n>> ");
-        uInput = rl.prompt();
-        uInput = uInput.trim().toLowerCase();
-        console.log(`DEBUG: You entered ${uInput}`);
-
-        if (uInput.length > 1) {
-            console.log("Your guess must be only one single letter.");
-            continue;
-        } else if (!(alphabet.contains(uInput))) {
-            console.log(`${uInput} is not a recognized letter. Please pick a letter out of the standard English alphabet.`)
-            continue;
-        };
-        
-        return uInput;
-
-    };
-        
-};
-
-// The purpose of this function is to make the game playable in the console, for the purpose of testing.
-// It has no user-facing function and won't be used in release versions of this game.
-runInConsoleMode = function(wrd) {
-    const game = instanceGame(wrd);
-    let turnResult;
-
-    while (true) { // Execute forever until break
-
-        printGameState.call(game);
-
-        try {
-            turnResult = game.guess(getNewGuess())
-        } catch(e) {
-            if (e === 'alreadyUsedLetter') {
-                console.log("You already guessed that one!");
-                continue;
-            } else if (e === 'gameOver'){
-                break;
-            } else {
-                // I don't want to catch any errors that I'm not handling, so I'll throw back anything that isn't what I'm trying to catch. 
-                throw(e) 
-            };
-
-        };
-
-        if (turnResult) {
-            console.log("You got it!");
-        } else {
-            console.log("Sorry, that was not one of the letters.")
-        };
-    };
-
-    if (game.userHits.contains('_')) {
-        console.log("G A M E  O V E R")
-        console.log(`The word was ${game.answer}`)
-    } else {
-        console.log('Y O U  W I N !')
-        console.log('Congradulations!')
-    };
-
-};
-
-// To Run DEBUG Console Mode:
-
-runInConsoleMode(getWord());
-
-*/ 
