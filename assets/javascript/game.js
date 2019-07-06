@@ -444,6 +444,34 @@ instanceGame = function (word) {
     };
 };
 
+readyNewGame = function () {
+    // Does everything necessary to go from defualt state or the end of a game, to the beginnning of a new game.
+    // Ready for user input and gameplay after running this.
+
+    // Replace any existing game instance with a brand new one in the game variable, using a new, randomly selected, word. 
+    game = instanceGame(getWord());
+
+    // Set expected input type to 'guess' for the inputHandler
+    qType = 'guess';
+
+    // Play our computery ambient sound from the beginning.
+    startUpSound.load();
+    startUpSound.play();
+
+    // Blanking out the game window.
+    for (i = 14; i > 0; i--) {
+        terminalBuffer.add(' ')
+    };
+    
+    // Printing new instruction text into game window
+    terminalBuffer.add('--------------------------------------------------------------');
+    terminalBuffer.add('Mainframe hacking in progress...');
+    terminalBuffer.gameState(game);
+    terminalBuffer.add('You must guess each letter of the password individually.');
+    terminalBuffer.add("Type 'help' for further instructions.");
+    terminalBuffer.message('Enter your first guess below:');
+    return;
+};
 
 // ---------------------------- UI Elements ---------------------------- //
 
@@ -664,26 +692,9 @@ inputHandler = function (event) {
         case 'begin':
             // If user responds in the affirmative, create a new game object inside of the global game variable.
             // Then we'll print some instructions to get them started. 
+            // This section of code was moved into an external function, so now almost everything is handled in readyNewGame.
             if (yess.includes(uIn)) {
-                game = instanceGame(getWord());
-                qType = 'guess';
-
-                // Play our computery ambient sound from the beginning.
-                startUpSound.load();
-                startUpSound.play();
-
-                // Blanking out the game window.
-                for (i = 14; i > 0; i--) {
-                    terminalBuffer.add(' ')
-                };
-                
-                // Printing new instruction text into game window
-                terminalBuffer.add('--------------------------------------------------------------');
-                terminalBuffer.add('Mainframe hacking in progress...');
-                terminalBuffer.gameState(game);
-                terminalBuffer.add('You must guess each letter of the password individually.');
-                terminalBuffer.add("Type 'help' for further instructions.");
-                terminalBuffer.message('Enter your first guess below:');
+                readyNewGame();
                 return;
 
             // If the user responds in the negative, blank out the console window and print 'session closed' then turn off the user's ability to interact with the program.
