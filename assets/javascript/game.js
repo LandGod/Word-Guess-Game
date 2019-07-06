@@ -622,9 +622,13 @@ inputHandler = function (event) {
             if (yess.includes(uIn)) {
                 game = instanceGame(getWord());
                 qType = 'guess';
+
+                // Blanking out the game window.
                 for (i = 13; i > 0; i--) {
                     terminalBuffer.add(' ')
                 };
+                
+                // Printing new instruction text into game window
                 terminalBuffer.add('--------------------------------------------------------------')
                 terminalBuffer.add('Mainframe hacking in progress...')
                 terminalBuffer.gameState(game);
@@ -664,8 +668,9 @@ inputHandler = function (event) {
 terminalBuffer.add("As we all know, most passwords are common english words of at least 4 letters.");
 terminalBuffer.add("Trust me, these are just facts.");
 terminalBuffer.add("You are a hacker in the year 2047.");
-terminalBuffer.add("Advanced deep learning algorithms and A.I. allow you to penetrate even the most secure mainfraims.");
-terminalBuffer.add("All you need is their common English word password and your advanced RSA6 anti-firewall crack");
+terminalBuffer.add("Advanced deep learning algorithms and A.I. allow you to penetrate even the most ");
+terminalBuffer.add("secure mainfraims. All you need is their common English word password and your ");
+terminalBuffer.add(`advanced RSA6 anti-firewall crack`);
 terminalBuffer.add("program can de-salt the security hashbrowns and circumvent the 7-factor authentication.");
 terminalBuffer.add("Did I mention the deep learning and algorithms? You've got tons of them!");
 terminalBuffer.add("It's all very technical of course. All you need to know, is that to get inside, you'll need to correctly");
