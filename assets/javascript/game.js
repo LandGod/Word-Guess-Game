@@ -330,6 +330,7 @@ const nos = ['n', 'no', 'nah', 'negative', 'no way'];
 
 // Will hold the game instance.
 let game;
+let score = {'wins': 0, 'losses': 0};
 
 randInt = function (min, max) {
     //Returns and random whole number between the specified minimum and maximum (inclusive)
@@ -478,6 +479,7 @@ readyNewGame = function () {
 // HTML elements that we'll need. Out is where we print data to from the terminalBuffer object. In is the html input field that the user interacts with.
 let gameOut = document.getElementById("gameWindowWrite"); //All out game output should be appended on a new line here
 let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
+let scoreBoard = document.getElementById("score") // This is the score section in the nav bar
 let startUpSound = document.getElementById("sysLoad"); // The sound of an old PC turning on for some ambiance
 let errorSound = document.getElementById("errorBeep"); // An error sound
 let failure = document.getElementById("failure"); // Sound for losing the game
@@ -486,6 +488,12 @@ let boop = document.getElementById("boop"); // Sound for things that are neutral
 
 // Some variables that we'd like to be global to help store data between seperate instances of the same function.
 let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
+
+updateScore = function () {
+    // Updates the scoreBoard html element using the current values stored in score.
+    scoreBoard.innerHTML = `Wins: ${score['wins']} | Losses: ${score['losses']}`
+
+};
 
 const terminalBuffer = {
     // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
@@ -655,6 +663,8 @@ inputHandler = function (event) {
                             qType = 'begin';
                             // Then print the message.
                             terminalBuffer.print();
+                            score['losses'] += 1;
+                            updateScore();
                             break;
                             
                         case 'gameWin':
@@ -675,6 +685,8 @@ inputHandler = function (event) {
                             qType = 'begin';
                             // Then print the message.
                             terminalBuffer.print();
+                            score['wins'] += 1;
+                            updateScore();
                             break;
     
                         case 'alreadyUsedLetter':
