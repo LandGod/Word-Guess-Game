@@ -561,6 +561,11 @@ inputHandler = function (event) {
         return false;
     };
 
+    // Resart command
+    if ((uIn === 'restart') && (qType === 'guess')) {
+        window.location.reload();
+    };
+
     // Beside being a blank string, we'll need to know what is expected before we can make further determinations about its validity
     // Thus we'll use the switch pattern to find the appropriate behavior from now on
     // Note that if the qType variable was not properly set, prior to getting the user input, then this function may not work properly. 
