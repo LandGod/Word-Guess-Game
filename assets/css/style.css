@@ -20,6 +20,11 @@ textarea, select, input, button {
     border-top: 0px !important;
 }
 
+#aboutSection {
+    background-color: black;
+    color: #34e326;
+}
+
 .footerFixer {
     min-height: calc(100vh - 208px);
 }
