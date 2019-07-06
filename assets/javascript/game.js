@@ -543,6 +543,17 @@ inputHandler = function (event) {
         return false;
     };
 
+    // We're also going to add a 'help' command to help users who forgot the other command(s):
+    if ((uIn === 'help') && (qType === 'guess')) {
+        terminalBuffer.add(`----- Commands -----`);
+        terminalBuffer.add(`help    - Show this command list`);
+        terminalBuffer.add(`status  - Show which letters have already been guessed`);
+        terminalBuffer.add(`restart - Re-start the game with a new word.`);
+        terminalBuffer.add(' ');
+        terminalBuffer.print();
+        return false;
+    };
+
     // Beside being a blank string, we'll need to know what is expected before we can make further determinations about its validity
     // Thus we'll use the switch pattern to find the appropriate behavior from now on
     // Note that if the qType variable was not properly set, prior to getting the user input, then this function may not work properly. 
