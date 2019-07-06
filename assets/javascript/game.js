@@ -531,6 +531,18 @@ inputHandler = function (event) {
         return false;
     };
 
+    // If the user wants to see thecontents of thier guessBank, ie: What letters they've already guessed, they can use the 'status' command
+    // Here we will handle calls to 'status'
+    if ((uIn === 'status') && (qType === 'guess')) {
+        if (!game.guessBank) {
+            terminalBuffer.add('You have not made any guesses yet.');
+        } else {
+            terminalBuffer.add(`You have already guessed the following letters: ${game.guessBank}`);
+        }; 
+        terminalBuffer.print();
+        return false;
+    };
+
     // Beside being a blank string, we'll need to know what is expected before we can make further determinations about its validity
     // Thus we'll use the switch pattern to find the appropriate behavior from now on
     // Note that if the qType variable was not properly set, prior to getting the user input, then this function may not work properly. 
