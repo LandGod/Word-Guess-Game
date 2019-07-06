@@ -556,6 +556,7 @@ inputHandler = function (event) {
         terminalBuffer.add(`Guessing the same letter twice will not count as a wrong guess.`);
         terminalBuffer.add(`If a word has multiple instances of the same letter, all instances of that`);
         terminalBuffer.add(`letter will be filled in on a correct guess.`);
+        terminalBuffer.add('Guesses must be for a single letter only. You may not guess the whole word at once.')
         terminalBuffer.add(' ');
         terminalBuffer.print();
         return false;
@@ -677,11 +678,12 @@ inputHandler = function (event) {
                 };
                 
                 // Printing new instruction text into game window
-                terminalBuffer.add('--------------------------------------------------------------')
-                terminalBuffer.add('Mainframe hacking in progress...')
+                terminalBuffer.add('--------------------------------------------------------------');
+                terminalBuffer.add('Mainframe hacking in progress...');
                 terminalBuffer.gameState(game);
-                terminalBuffer.add('You must guess each letter of the password individually.')
-                terminalBuffer.message('Enter your first guess below:')
+                terminalBuffer.add('You must guess each letter of the password individually.');
+                terminalBuffer.add("Type 'help' for further instructions.");
+                terminalBuffer.message('Enter your first guess below:');
                 return;
 
             // If the user responds in the negative, blank out the console window and print 'session closed' then turn off the user's ability to interact with the program.
