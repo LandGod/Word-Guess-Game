@@ -5,9 +5,6 @@
 // How many incorrect guesses the user is allowed before they lose the game:
 const LIVES = 6;
 
-// Some flavor text for the console look of the game
-const flavorText = "c/vault/top_secret/ "
-
 // Basically a max height of our console's output section. Measured by number of lines of text.
 const OUTPUTMAXLINES = 20;
 
@@ -461,7 +458,7 @@ const terminalBuffer = {
     // We don't want our terminal window to get to tall, so we'll use a terminal buffer object
     // This object will include a method for printing out only first x lines of our total output thus far
     // We'll base the total number of lines on an easily changeable constant OUTPUTMAXLINES
-    buff : [' ', ' ', ' ', ' ', ' ', ' ', ' ', flavorText], // The actual list we store all this into
+    buff : [' ', ' ', ' ', ' ', ' ', ' ', ' ', '/c/Users/Admin/TopSecret'], // The actual list we store all this into
 
     add : function (text) { 
         // Simply adds input to the end of the list, BUT removes the first item in the list every time it does this when we hit our line limit
@@ -490,7 +487,6 @@ const terminalBuffer = {
         };
         terminalBuffer.add(text);
         terminalBuffer.add(' ');
-        terminalBuffer.add(flavorText);
         terminalBuffer.print();
 
     },
@@ -624,7 +620,7 @@ inputHandler = function (event) {
                 qType = 'guess';
 
                 // Blanking out the game window.
-                for (i = 13; i > 0; i--) {
+                for (i = 14; i > 0; i--) {
                     terminalBuffer.add(' ')
                 };
                 
