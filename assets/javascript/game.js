@@ -450,6 +450,8 @@ instanceGame = function (word) {
 // HTML elements that we'll need. Out is where we print data to from the terminalBuffer object. In is the html input field that the user interacts with.
 let gameOut = document.getElementById("gameWindowWrite"); //All out game output should be appended on a new line here
 let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
+let startUpSound = document.getElementById("sysLoad"); // The sound of an old PC turning on for some ambiance
+let errorSound = document.getElementById("errorBeep"); // An error sound
 
 // Some variables that we'd like to be global to help store data between seperate instances of the same function.
 let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
@@ -537,6 +539,7 @@ inputHandler = function (event) {
             // First we check to make sure that the guess is only one character and that that character is from the english alphabet.
             if ((uIn.length > 1) || !(alphabet.includes(uIn))) {
                 // console.log(`DEBUG: Unsuitable command: ${uIn}`)
+                errorSound.play();
                 terminalBuffer.message(`bash: ${uIn}: command not found`); 
 
             // If it passes that test, it's time to handle it as a valid move in the actual game.
@@ -551,6 +554,7 @@ inputHandler = function (event) {
                         terminalBuffer.print();
                     } else {
                         // In the case of a wrong guess, we tell the user they were wrong and let them know how many remaining lives the have.
+                        errorSound.play();
                         terminalBuffer.add(`Incorrect! Only ${game.userLives} chances remaining before security lockout.`);
                         terminalBuffer.gameState(game);
                         terminalBuffer.print();
@@ -564,6 +568,7 @@ inputHandler = function (event) {
                             // If the user loses, we inform them, then reset the game and ask if they wan't to play again.
                             // We must add the messages first so we can cue everything up in the terminalBuffer before re-setitng the game object.
                             // console.log("DEBUG: Activating lose condition in inputHandler!")
+                            startUpSound.pause();
                             terminalBuffer.add('Incorrect!');
                             terminalBuffer.gameState(game);
                             terminalBuffer.add('SECURITY LOCKOUT ACTIVATED!!');
@@ -582,6 +587,7 @@ inputHandler = function (event) {
                             // If the user wins, we congradulate them and then reset the game.
                             // We must add the congradulations first so we can cue everything up in the terminalBuffer before re-setitng the game object.
                             // console.log("DEBUG: Activating win condition in inputHandler!")
+                            startUpSound.pause();
                             terminalBuffer.add('Correct!');
                             terminalBuffer.gameState(game);
                             terminalBuffer.add('HACK SUCCESSFULL!!');
@@ -598,6 +604,7 @@ inputHandler = function (event) {
                         case 'alreadyUsedLetter':
                             // If the user tries to guess the same letter twice, we don't want to penalize them, so we just tell them to try again
                             // They don't lose any lives though.
+                            errorSound.play();
                             terminalBuffer.add(`${uIn} was already tried. Try a different letter:`);
                             terminalBuffer.print();
                             break;
@@ -619,6 +626,10 @@ inputHandler = function (event) {
                 game = instanceGame(getWord());
                 qType = 'guess';
 
+                // Play our computery ambient sound from the beginning.
+                startUpSound.load();
+                startUpSound.play();
+
                 // Blanking out the game window.
                 for (i = 14; i > 0; i--) {
                     terminalBuffer.add(' ')
@@ -639,6 +650,7 @@ inputHandler = function (event) {
                     terminalBuffer.add(' ');
                 };
                 terminalBuffer.print();
+                errorSound.play();
                 gameIn.removeEventListener("keydown", inputHandler);
                 return;
 
