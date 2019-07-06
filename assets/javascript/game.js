@@ -452,6 +452,9 @@ let gameOut = document.getElementById("gameWindowWrite"); //All out game output 
 let gameIn = document.getElementById("gameWindowRead"); // All our user input should be read from here.
 let startUpSound = document.getElementById("sysLoad"); // The sound of an old PC turning on for some ambiance
 let errorSound = document.getElementById("errorBeep"); // An error sound
+let failure = document.getElementById("failure"); // Sound for losing the game
+let success = document.getElementById("success"); // Sound for winners!
+let boop = document.getElementById("boop"); // Sound for things that are neutral
 
 // Some variables that we'd like to be global to help store data between seperate instances of the same function.
 let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
@@ -569,6 +572,7 @@ inputHandler = function (event) {
                             // We must add the messages first so we can cue everything up in the terminalBuffer before re-setitng the game object.
                             // console.log("DEBUG: Activating lose condition in inputHandler!")
                             startUpSound.pause();
+                            failure.play();
                             terminalBuffer.add('Incorrect!');
                             terminalBuffer.gameState(game);
                             terminalBuffer.add('SECURITY LOCKOUT ACTIVATED!!');
@@ -588,8 +592,10 @@ inputHandler = function (event) {
                             // We must add the congradulations first so we can cue everything up in the terminalBuffer before re-setitng the game object.
                             // console.log("DEBUG: Activating win condition in inputHandler!")
                             startUpSound.pause();
+                            success.play();
                             terminalBuffer.add('Correct!');
                             terminalBuffer.gameState(game);
+                            terminalBuffer.add(' ');
                             terminalBuffer.add('HACK SUCCESSFULL!!');
                             terminalBuffer.add('YOU WIN!!');
                             terminalBuffer.add(' ');
@@ -650,7 +656,7 @@ inputHandler = function (event) {
                     terminalBuffer.add(' ');
                 };
                 terminalBuffer.print();
-                errorSound.play();
+                boop.play();
                 gameIn.removeEventListener("keydown", inputHandler);
                 return;
 
