@@ -534,7 +534,7 @@ inputHandler = function (event) {
     // If the user wants to see thecontents of thier guessBank, ie: What letters they've already guessed, they can use the 'status' command
     // Here we will handle calls to 'status'
     if ((uIn === 'status') && (qType === 'guess')) {
-        if (!game.guessBank) {
+        if (game.guessBank.length === 0) {
             terminalBuffer.add('You have not made any guesses yet.');
         } else {
             terminalBuffer.add(`You have already guessed the following letters: ${game.guessBank}`);
