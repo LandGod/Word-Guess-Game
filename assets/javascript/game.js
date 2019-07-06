@@ -550,6 +550,13 @@ inputHandler = function (event) {
         terminalBuffer.add(`status  - Show which letters have already been guessed`);
         terminalBuffer.add(`restart - Re-start the game with a new word.`);
         terminalBuffer.add(' ');
+        terminalBuffer.add('------- Rules -------');
+        terminalBuffer.add(`After ${LIVES} wrong guesses the server security will lock you out`);
+        terminalBuffer.add(`and you will lose the game.`);
+        terminalBuffer.add(`Guessing the same letter twice will not count as a wrong guess.`);
+        terminalBuffer.add(`If a word has multiple instances of the same letter, all instances of that`);
+        terminalBuffer.add(`letter will be filled in on a correct guess.`);
+        terminalBuffer.add(' ');
         terminalBuffer.print();
         return false;
     };
