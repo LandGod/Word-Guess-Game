@@ -1,6 +1,21 @@
-// TODO: 1) Add a protection that prevents the user from being able to send input when the program is not ready for it. 
-//       2) Change code in default qType switch in inputHandler such that an error resulting in default being activated is recoverable
-//
+// By Daniel Gold | github.com/LandGod
+
+/* How the game works:
+The user is shown some flavor text in what appears to be a classic command line interface (not that I'm trying very hard for authenticity).
+The user is then prompted to play the game or not by entering 'y' or 'n'.
+If the user replies 'n' then the console 'shuts down' and the user will have to reload the page if they want to do anything else.
+If the user replies 'y', the console blanks out and replaces the flavor text with some instructions and a prompt to begin guessing.
+From there it's classic hangman.
+Wins and losses are counted on the nav bar as long as the user doesn't leave or refresh the page. 
+
+Most of the heavy lifting here is done by the game instance object, the inputHandler function, and the terminalBuffer object.
+The object stored in the 'game' variable does very low level game logic, deciding if a move is valid or not, correct or not, and 
+whether or not the user has won or lost the game. What to do about any of these circumstances is then passed back to inputHandler
+which was the thing calling up game in the first place. Finally, inputHandler will put all its comunicaitons to the user into 
+terminalBuffer. 
+
+terminalBuffer simply exists to help keep our text output formatted in such a way that things look like a classic command line and 
+the game window never has to re-size (as long as the viewport is big enough in the first place).*/
 
 // How many incorrect guesses the user is allowed before they lose the game:
 const LIVES = 6;
