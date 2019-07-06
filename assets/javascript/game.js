@@ -443,13 +443,13 @@ instanceGame = function (word) {
                 this.userLives--;
                 
                 if (this.userLives < 1) {
-                    console.log("DEBUG: Activating lose condition in game instance")
+                    // console.log("DEBUG: Activating lose condition in game instance")
                     throw('gameOver');
                 };
             };
             
             if (this.answerKey.equals(this.userHits)) {
-                console.log("DEBUG: Activating win condition in game instance")
+                // console.log("DEBUG: Activating win condition in game instance")
                 throw('gameWin');
             };
 
