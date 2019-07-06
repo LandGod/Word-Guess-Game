@@ -25,6 +25,10 @@ textarea, select, input, button {
     color: #34e326;
 }
 
+#aboutSection a {
+    color: #FF2BA9;
+}
+
 .footerFixer {
     min-height: calc(100vh - 208px);
 }
