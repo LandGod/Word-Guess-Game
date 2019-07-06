@@ -12,3 +12,6 @@ For this game, I've gone with an 80s retro futurism aesthetic. A certain amount 
 
 For more information, feel free to contact the author via email at: [DanielJasonGold@gmail.com](mailto:DanielJasonGold@gmail.com)
 
+
+
+For credits, see the 'about' page of the website.
