@@ -571,6 +571,12 @@ inputHandler = function (event) {
         return false;
     };
 
+    // Resrt command aborts the current game and sets up a new game instance with a new word.
+    if ((uIn === 'restart') && (qType === 'guess')) {
+        readyNewGame();
+        return;
+    };
+
     // We're also going to add a 'help' command to help users who forgot the other command(s):
     if ((uIn === 'help') && (qType === 'guess')) {
         terminalBuffer.add(`----- Commands -----`);
@@ -693,7 +699,7 @@ inputHandler = function (event) {
             // If user responds in the affirmative, create a new game object inside of the global game variable.
             // Then we'll print some instructions to get them started. 
             // This section of code was moved into an external function, so now almost everything is handled in readyNewGame.
-            if (yess.includes(uIn)) {
+            if (yess.includes(uIn) || uIn === 'restart') {
                 readyNewGame();
                 return;
 
@@ -720,7 +726,7 @@ inputHandler = function (event) {
         default:
             console.log(`ERROR: qType switch activated at default`)
             terminalBuffer.message(`FATAL ERROR: Machine will now restart.`); 
-            window.location.reload(); // Reloads the webpage.
+            readyNewGame(); // Re-starts the game with a new word, without re-loading the webpage.
             return;
 
     };
