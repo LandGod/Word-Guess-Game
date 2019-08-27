@@ -345,7 +345,14 @@ const nos = ['n', 'no', 'nah', 'negative', 'no way'];
 
 // Will hold the game instance.
 let game;
+
+// Initialize score variable
 let score = {'wins': 0, 'losses': 0};
+
+// Update with saved values from local storage, if any exist
+if (localStorage.wins) {score.wins = parseInt(localStorage.wins)};
+if (localStorage.losses) {score.losses = parseInt(localStorage.losses)};
+
 
 randInt = function (min, max) {
     //Returns and random whole number between the specified minimum and maximum (inclusive)
@@ -505,7 +512,9 @@ let boop = document.getElementById("boop"); // Sound for things that are neutral
 let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
 
 updateScore = function () {
-    // Updates the scoreBoard html element using the current values stored in score.
+    // Updates the scoreBoard html element and local storage using the current values stored in score.
+    localStorage.wins = score.wins;
+    localStorage.losses = score.losses;
     scoreBoard.innerHTML = `Wins: ${score['wins']} | Losses: ${score['losses']}`
 
 };
@@ -758,6 +767,9 @@ inputHandler = function (event) {
 
     };
 };
+
+// Update score
+updateScore();
 
 // Setup game when user lands on the page:
 terminalBuffer.add("As we all know, most passwords are common english words of at least 4 letters.");
