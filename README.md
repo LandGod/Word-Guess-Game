@@ -1,7 +1,7 @@
 # Word Guess Game
 Word Guess Game aka **Super Realistic Hacking Simulator** is a game in which the user guesses a word. In other words, it's hangman. The rules should be familiar to anyone who has played hangman before.
 
-**Play Now:** [Launch Game](http://landgod.githuh.io/Word-Guess-Game)
+**Play Now:** [Launch Game](https://landgod.github.io/Word-Guess-Game/)
 
 * A word (the answer) is picked by the computer that the user must then try to guess.
 * The user must guess one letter at a time.
