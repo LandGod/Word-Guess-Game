@@ -508,6 +508,9 @@ let failure = document.getElementById("failure"); // Sound for losing the game
 let success = document.getElementById("success"); // Sound for winners!
 let boop = document.getElementById("boop"); // Sound for things that are neutral
 
+// Volume adujustment (reduce to 10%) because the failure sound is earsplitting.
+failure.volume = 0.1;
+
 // Some variables that we'd like to be global to help store data between seperate instances of the same function.
 let qType = 'guess'; // This will be a flag that we changed back and forth on the fly in order to specify the kind of input that inputHandler() should be expecting.
 
